@@ -354,6 +354,7 @@ void FullyConnectedMesh2::OnClosedConnection(const SystemAddress &systemAddress,
 	{
 		if (fcm2ParticipantList[idx]->rakNetGuid==rakNetGUID)
 		{
+			RakNet::OP_DELETE(fcm2ParticipantList[idx], _FILE_AND_LINE_);
 			fcm2ParticipantList[idx]=fcm2ParticipantList[fcm2ParticipantList.Size()-1];
 #ifdef DEBUG_FCM2
 			printf("Popping participant %s\n", fcm2ParticipantList[fcm2ParticipantList.Size()-1].rakNetGuid.ToString());
@@ -412,7 +413,7 @@ void FullyConnectedMesh2::Clear(void)
 {
 	for (unsigned int i=0; i < fcm2ParticipantList.Size(); i++)
 	{
-		delete fcm2ParticipantList[i];
+		RakNet::OP_DELETE(fcm2ParticipantList[i], _FILE_AND_LINE_);
 	}
 	fcm2ParticipantList.Clear(false, _FILE_AND_LINE_);
 
