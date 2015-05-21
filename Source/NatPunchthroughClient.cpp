@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -469,7 +469,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				}
 			}
 		}
-		return RR_STOP_PROCESSING_AND_DEALLOCATE;	
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_OUT_OF_BAND_INTERNAL:
 		if (packet->length>=2 && packet->data[1]==ID_NAT_PONG)
 		{
@@ -506,7 +506,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 			// sp.targetGuid==packet->guid is because the internal IP addresses reported may include loopbacks not reported by RakPeer::IsLocalIP()
 			if (packet->data[1]==ID_NAT_ESTABLISH_UNIDIRECTIONAL && sp.targetGuid==packet->guid)
 			{
-				
+
 				if (sp.testMode!=SendPing::PUNCHING_FIXED_PORT)
 				{
 					sp.testMode=SendPing::PUNCHING_FIXED_PORT;
@@ -792,7 +792,7 @@ void NatPunchthroughClient::SendTTL(const SystemAddress &sa)
 	rakPeerInterface->SendTTL(ipAddressString,sa.GetPort(), 2);
 }
 
-char *TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
+static const char *TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
 {
 	switch (tm)
 	{
@@ -1193,7 +1193,7 @@ void NatPunchthroughClient::UpdateGroupPunchOnNatResult(SystemAddress facilitato
 			for (k=0; k < gpr->failedList.Size(); k++)
 			{
 				output.Write(gpr->failedList[k]);
-			}			
+			}
 
 			Packet *p = AllocatePacketUnified(output.GetNumberOfBytesUsed());
 			p->systemAddress=gpr->facilitator;
