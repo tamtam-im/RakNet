@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -21,7 +21,7 @@
 #include "LinuxStrings.h"
 #include "SocketDefines.h"
 #if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
-#include <netdb.h>
+//#include <netdb.h>
 #endif
 
 using namespace RakNet;
@@ -44,18 +44,18 @@ using namespace pp;
 #else
 #include <string.h> // memcpy
 #include <unistd.h>
-#include <fcntl.h>
-#include <arpa/inet.h>
+//#include <fcntl.h>
+//#include <arpa/inet.h>
 #include <errno.h>  // error numbers
 #include <stdio.h> // RAKNET_DEBUG_PRINTF
-#if !defined(ANDROID)
-#include <ifaddrs.h>
-#endif
-#include <netinet/in.h>
-#include <net/if.h>
+// #if !defined(ANDROID)
+// #include <ifaddrs.h>
+// #endif
+// #include <netinet/in.h>
+//#include <net/if.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/ioctl.h>
+//#include <sys/ioctl.h>
 
 #endif
 
@@ -97,7 +97,7 @@ namespace RakNet
 #include <stdio.h>
 #endif
 
- 
+
 
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#ip4to6
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#getaddrinfo
@@ -110,7 +110,7 @@ void PrepareAddrInfoHints(addrinfo *hints)
 	hints->ai_flags = AI_PASSIVE;     // fill in my IP for me
 }
 #endif
- 
+
 void SocketLayer::SetSocketOptions( __UDPSOCKET__ listenSocket, bool blockingSocket, bool setBroadcast)
 {
 #ifdef __native_client__
@@ -179,99 +179,98 @@ void SocketLayer::SetSocketOptions( __UDPSOCKET__ listenSocket, bool blockingSoc
 
 #endif
 }
- 
 
-RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
-{
-	RakNet::RakString netMaskString;
-	RakNet::RakString ipString;
 
+// RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
+// {
+// 	RakNet::RakString netMaskString;
+// 	RakNet::RakString ipString;
 
 
 
 
-#if   defined(WINDOWS_STORE_RT)
-	RakAssert("Not yet supported" && 0);
-	return "";
-#elif defined(_WIN32)
-	INTERFACE_INFO InterfaceList[20];
-	unsigned long nBytesReturned;
-	if (WSAIoctl(inSock, SIO_GET_INTERFACE_LIST, 0, 0, &InterfaceList,
-		sizeof(InterfaceList), &nBytesReturned, 0, 0) == SOCKET_ERROR) {
-			return "";
-	}
 
-	int nNumInterfaces = nBytesReturned / sizeof(INTERFACE_INFO);
+// #if   defined(WINDOWS_STORE_RT)
+// 	RakAssert("Not yet supported" && 0);
+// 	return "";
+// #elif defined(_WIN32)
+// 	INTERFACE_INFO InterfaceList[20];
+// 	unsigned long nBytesReturned;
+// 	if (WSAIoctl(inSock, SIO_GET_INTERFACE_LIST, 0, 0, &InterfaceList,
+// 		sizeof(InterfaceList), &nBytesReturned, 0, 0) == SOCKET_ERROR) {
+// 			return "";
+// 	}
 
-	for (int i = 0; i < nNumInterfaces; ++i)
-	{
-		sockaddr_in *pAddress;
-		pAddress = (sockaddr_in *) & (InterfaceList[i].iiAddress);
-		ipString=inet_ntoa(pAddress->sin_addr);
+// 	int nNumInterfaces = nBytesReturned / sizeof(INTERFACE_INFO);
 
-		if (inIpString==ipString)
-		{
-			pAddress = (sockaddr_in *) & (InterfaceList[i].iiNetmask);
-			netMaskString=inet_ntoa(pAddress->sin_addr);
-			return netMaskString;
-		}
-	}
-	return "";
-#else
+// 	for (int i = 0; i < nNumInterfaces; ++i)
+// 	{
+// 		sockaddr_in *pAddress;
+// 		pAddress = (sockaddr_in *) & (InterfaceList[i].iiAddress);
+// 		ipString=inet_ntoa(pAddress->sin_addr);
 
-	int fd,fd2;
-	fd2 = socket__(AF_INET, SOCK_DGRAM, 0);
+// 		if (inIpString==ipString)
+// 		{
+// 			pAddress = (sockaddr_in *) & (InterfaceList[i].iiNetmask);
+// 			netMaskString=inet_ntoa(pAddress->sin_addr);
+// 			return netMaskString;
+// 		}
+// 	}
+// 	return "";
+// #else
 
-	if(fd2 < 0)
-	{
-		return "";
-	}
+// 	int fd,fd2;
+// 	fd2 = socket__(AF_INET, SOCK_DGRAM, 0);
 
-	struct ifconf ifc;
-	char          buf[1999];
-	ifc.ifc_len = sizeof(buf);
-	ifc.ifc_buf = buf;
-	if(ioctl(fd2, SIOCGIFCONF, &ifc) < 0)
-	{
-		return "";
-	}
+// 	if(fd2 < 0)
+// 	{
+// 		return "";
+// 	}
 
-	struct ifreq *ifr;
-	ifr         = ifc.ifc_req;
-	int intNum = ifc.ifc_len / sizeof(struct ifreq);
-	for(int i = 0; i < intNum; i++)
-	{
-		ipString=inet_ntoa(((struct sockaddr_in *)&ifr[i].ifr_addr)->sin_addr);
+// 	struct ifconf ifc;
+// 	char          buf[1999];
+// 	ifc.ifc_len = sizeof(buf);
+// 	ifc.ifc_buf = buf;
+// 	if(ioctl(fd2, SIOCGIFCONF, &ifc) < 0)
+// 	{
+// 		return "";
+// 	}
 
-		if (inIpString==ipString)
-		{
-			struct ifreq ifr2;
-			fd = socket__(AF_INET, SOCK_DGRAM, 0);
-			if(fd < 0)
-			{
-				return "";
-			}
-			ifr2.ifr_addr.sa_family = AF_INET;
+// 	struct ifreq *ifr;
+// 	ifr         = ifc.ifc_req;
+// 	int intNum = ifc.ifc_len / sizeof(struct ifreq);
+// 	for(int i = 0; i < intNum; i++)
+// 	{
+// 		ipString=inet_ntoa(((struct sockaddr_in *)&ifr[i].ifr_addr)->sin_addr);
 
-			strncpy(ifr2.ifr_name, ifr[i].ifr_name, IFNAMSIZ-1);
+// 		if (inIpString==ipString)
+// 		{
+// 			struct ifreq ifr2;
+// 			fd = socket__(AF_INET, SOCK_DGRAM, 0);
+// 			if(fd < 0)
+// 			{
+// 				return "";
+// 			}
+// 			ifr2.ifr_addr.sa_family = AF_INET;
 
-			ioctl(fd, SIOCGIFNETMASK, &ifr2);
+// 			strncpy(ifr2.ifr_name, ifr[i].ifr_name, IFNAMSIZ-1);
 
-			close(fd);
-			close(fd2);
-			netMaskString=inet_ntoa(((struct sockaddr_in *)&ifr2.ifr_addr)->sin_addr);
+// 			ioctl(fd, SIOCGIFNETMASK, &ifr2);
 
-			return netMaskString;
-		}
-	}
+// 			close(fd);
+// 			close(fd2);
+// 			netMaskString=inet_ntoa(((struct sockaddr_in *)&ifr2.ifr_addr)->sin_addr);
 
-	close(fd2);
-	return "";
+// 			return netMaskString;
+// 		}
+// 	}
 
-#endif
+// 	close(fd2);
+// 	return "";
 
-}
+// #endif
 
+// }
 
 
 
@@ -347,113 +346,114 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 
 
 
-#if   defined(WINDOWS_STORE_RT)
-void GetMyIP_WinRT( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
-{
-	// Perhaps DatagramSocket.BindEndpointAsynch, use localHostName as an empty string, then query what it bound to?
-	RakAssert("Not yet supported" && 0);
-}
-#else
-void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
-{
-	int idx=0;
-	idx=0;
-	char ac[ 80 ];
-	if ( gethostname( ac, sizeof( ac ) ) == -1 )
-	{
- #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
-		DWORD dwIOError = GetLastError();
-		LPVOID messageBuffer;
-		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
-			( LPTSTR ) & messageBuffer, 0, NULL );
-		// something has gone wrong here...
-		RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
-		//Free the buffer.
-		LocalFree( messageBuffer );
-		#endif
-		return ;
-	}
 
+// #if   defined(WINDOWS_STORE_RT)
+// void GetMyIP_WinRT( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+// {
+// 	// Perhaps DatagramSocket.BindEndpointAsynch, use localHostName as an empty string, then query what it bound to?
+// 	RakAssert("Not yet supported" && 0);
+// }
+// #else
+// void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+// {
+// 	int idx=0;
+// 	idx=0;
+// 	char ac[ 80 ];
+// 	if ( gethostname( ac, sizeof( ac ) ) == -1 )
+// 	{
+//  #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
+// 		DWORD dwIOError = GetLastError();
+// 		LPVOID messageBuffer;
+// 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+// 			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
+// 			( LPTSTR ) & messageBuffer, 0, NULL );
+// 		// something has gone wrong here...
+// 		RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+// 		//Free the buffer.
+// 		LocalFree( messageBuffer );
+// 		#endif
+// 		return ;
+// 	}
 
-#if RAKNET_SUPPORT_IPV6==1
-	struct addrinfo hints;
-	struct addrinfo *servinfo=0, *aip;  // will point to the results
-	PrepareAddrInfoHints(&hints);
-	getaddrinfo(ac, "", &hints, &servinfo);
 
-	for (idx=0, aip = servinfo; aip != NULL && idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; aip = aip->ai_next, idx++)
-	{
-		if (aip->ai_family == AF_INET)
-		{
-			struct sockaddr_in *ipv4 = (struct sockaddr_in *)aip->ai_addr;
-			memcpy(&addresses[idx].address.addr4,ipv4,sizeof(sockaddr_in));
-		}
-		else
-		{
-			struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)aip->ai_addr;
-			memcpy(&addresses[idx].address.addr4,ipv6,sizeof(sockaddr_in6));
-		}
+// #if RAKNET_SUPPORT_IPV6==1
+// 	struct addrinfo hints;
+// 	struct addrinfo *servinfo=0, *aip;  // will point to the results
+// 	PrepareAddrInfoHints(&hints);
+// 	getaddrinfo(ac, "", &hints, &servinfo);
 
-	}
+// 	for (idx=0, aip = servinfo; aip != NULL && idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; aip = aip->ai_next, idx++)
+// 	{
+// 		if (aip->ai_family == AF_INET)
+// 		{
+// 			struct sockaddr_in *ipv4 = (struct sockaddr_in *)aip->ai_addr;
+// 			memcpy(&addresses[idx].address.addr4,ipv4,sizeof(sockaddr_in));
+// 		}
+// 		else
+// 		{
+// 			struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)aip->ai_addr;
+// 			memcpy(&addresses[idx].address.addr4,ipv6,sizeof(sockaddr_in6));
+// 		}
 
-	freeaddrinfo(servinfo); // free the linked-list
-#else
-	struct hostent *phe = gethostbyname( ac );
+// 	}
 
-	if ( phe == 0 )
-	{
- #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
-		DWORD dwIOError = GetLastError();
-		LPVOID messageBuffer;
-		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
-			( LPTSTR ) & messageBuffer, 0, NULL );
-		// something has gone wrong here...
-		RAKNET_DEBUG_PRINTF( "gethostbyname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+// 	freeaddrinfo(servinfo); // free the linked-list
+// #else
+// 	struct hostent *phe = gethostbyname( ac );
 
-		//Free the buffer.
-		LocalFree( messageBuffer );
-	#endif
-		return ;
-	}
-	for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
-	{
-		if (phe->h_addr_list[ idx ] == 0)
-			break;
+// 	if ( phe == 0 )
+// 	{
+//  #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
+// 		DWORD dwIOError = GetLastError();
+// 		LPVOID messageBuffer;
+// 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+// 			NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
+// 			( LPTSTR ) & messageBuffer, 0, NULL );
+// 		// something has gone wrong here...
+// 		RAKNET_DEBUG_PRINTF( "gethostbyname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
-		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
+// 		//Free the buffer.
+// 		LocalFree( messageBuffer );
+// 	#endif
+// 		return ;
+// 	}
+// 	for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+// 	{
+// 		if (phe->h_addr_list[ idx ] == 0)
+// 			break;
 
-	}
-#endif // else RAKNET_SUPPORT_IPV6==1
+// 		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
 
-	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
-	{
-		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
-		idx++;
-	}
-}
+// 	}
+// #endif // else RAKNET_SUPPORT_IPV6==1
 
-#endif
+// 	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+// 	{
+// 		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
+// 		idx++;
+// 	}
+// }
 
+// #endif
 
-void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
-{
 
+// void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+// {
 
 
 
 
 
-#if   defined(WINDOWS_STORE_RT)
-	GetMyIP_WinRT(addresses);
-#elif defined(_WIN32)
-	GetMyIP_Win32(addresses);
-#else
-//	GetMyIP_Linux(addresses);
-	GetMyIP_Win32(addresses);
-#endif
-}
+
+// #if   defined(WINDOWS_STORE_RT)
+// 	GetMyIP_WinRT(addresses);
+// #elif defined(_WIN32)
+// 	GetMyIP_Win32(addresses);
+// #else
+// //	GetMyIP_Linux(addresses);
+// 	GetMyIP_Win32(addresses);
+// #endif
+// }
 
 
 /*
@@ -538,7 +538,7 @@ void SocketLayer::GetSystemAddress ( __UDPSOCKET__ s, SystemAddress *systemAddre
 		memcpy(&systemAddressOut->address.addr4,(sockaddr_in *)&ss,sizeof(sockaddr_in));
 		systemAddressOut->debugPort=ntohs(systemAddressOut->address.addr4.sin_port);
 
-		uint32_t zero = 0;		
+		uint32_t zero = 0;
 		if (memcmp(&systemAddressOut->address.addr4.sin_addr.s_addr, &zero, sizeof(zero))==0)
 			systemAddressOut->SetToLoopback(4);
 		//	systemAddressOut->address.addr4.sin_port=ntohs(systemAddressOut->address.addr4.sin_port);
@@ -569,43 +569,43 @@ void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddre
 // 	slo=_slo;
 // }
 
-bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
-{
-	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
-	SocketLayer::GetMyIP( ipList );
+// bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
+// {
+// 	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
+// 	SocketLayer::GetMyIP( ipList );
 
 
-	if (ipProto==AF_UNSPEC)
+// 	if (ipProto==AF_UNSPEC)
 
-	{
-		ipList[0].ToString(false,firstBindable);
-		return true;
-	}		
+// 	{
+// 		ipList[0].ToString(false,firstBindable);
+// 		return true;
+// 	}
 
-	// Find the first valid host address
-	unsigned int l;
-	for (l=0; l < MAXIMUM_NUMBER_OF_INTERNAL_IDS; l++)
-	{
-		if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS)
-			break;
-		if (ipList[l].GetIPVersion()==4 && ipProto==AF_INET)
-			break;
-		if (ipList[l].GetIPVersion()==6 && ipProto==AF_INET6)
-			break;
-	}
+// 	// Find the first valid host address
+// 	unsigned int l;
+// 	for (l=0; l < MAXIMUM_NUMBER_OF_INTERNAL_IDS; l++)
+// 	{
+// 		if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS)
+// 			break;
+// 		if (ipList[l].GetIPVersion()==4 && ipProto==AF_INET)
+// 			break;
+// 		if (ipList[l].GetIPVersion()==6 && ipProto==AF_INET6)
+// 			break;
+// 	}
 
-	if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS || l==MAXIMUM_NUMBER_OF_INTERNAL_IDS)
-		return false;
-// 	RAKNET_DEBUG_PRINTF("%i %i %i %i\n",
-// 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[0],
-// 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[1],
-// 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[2],
-// 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[3]
-// 	);
-	ipList[l].ToString(false,firstBindable);
-	return true;
+// 	if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS || l==MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+// 		return false;
+// // 	RAKNET_DEBUG_PRINTF("%i %i %i %i\n",
+// // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[0],
+// // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[1],
+// // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[2],
+// // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[3]
+// // 	);
+// 	ipList[l].ToString(false,firstBindable);
+// 	return true;
 
-}
+// }
 
 
 #ifdef _MSC_VER

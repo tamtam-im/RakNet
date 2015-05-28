@@ -41,6 +41,10 @@ using namespace RakNet;
 #include "RakNetSocket2_360_720.cpp"
 #include "RakNetSocket2_PS3_PS4.cpp"
 #include "RakNetSocket2_PS4.cpp"
+#ifdef TVRN_CUSTOM_RESOLVER
+void CustomGetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
+void CustomDomainNameToIP( const char *domainName, char ip[65] );
+#else
 #include "RakNetSocket2_Windows_Linux.cpp"
 #include "RakNetSocket2_Windows_Linux_360.cpp"
 #include "RakNetSocket2_Vita.cpp"
@@ -48,6 +52,7 @@ using namespace RakNet;
 #include "RakNetSocket2_Berkley.cpp"
 #include "RakNetSocket2_Berkley_NativeClient.cpp"
 #include "RakNetSocket2_WindowsStore8.cpp"
+#endif
 #undef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #endif
@@ -102,7 +107,9 @@ RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
 }
 void RakNetSocket2::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
-#if defined(WINDOWS_STORE_RT)
+#if defined(TVRN_CUSTOM_RESOLVER)
+	CustomGetMyIP(addresses);
+#elif defined(WINDOWS_STORE_RT)
 	RNS2_WindowsStore8::GetMyIP( addresses );
 
 
@@ -128,7 +135,9 @@ void RakNetSocket2::SetUserConnectionSocketIndex(unsigned int i) {userConnection
 RNS2EventHandler * RakNetSocket2::GetEventHandler(void) const {return eventHandler;}
 
 void RakNetSocket2::DomainNameToIP( const char *domainName, char ip[65] ) {
-#if defined(WINDOWS_STORE_RT)
+#if defined(TVRN_CUSTOM_RESOLVER)
+	return CustomDomainNameToIP( domainName, ip );
+#elif defined(WINDOWS_STORE_RT)
 	return RNS2_WindowsStore8::DomainNameToIP( domainName, ip );
 #elif defined(__native_client__)
 	return DomainNameToIP_Berkley( domainName, ip );
@@ -507,7 +516,9 @@ SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride(void) {return slo;}
 #else
 RNS2BindResult RNS2_Linux::Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {return BindShared(bindParameters, file, line);}
 RNS2SendResult RNS2_Linux::Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line ) {return Send_Windows_Linux_360NoVDP(rns2Socket,sendParameters, file, line);}
+#if !defined(TVRN_CUSTOM_RESOLVER)
 void RNS2_Linux::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {return GetMyIP_Windows_Linux(addresses);}
+#endif
 #endif // Linux
 
 #endif //  defined(__native_client__)

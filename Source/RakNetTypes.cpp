@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -39,6 +39,14 @@
 #include "SocketLayer.h"
 #include "SuperFastHash.h"
 #include <stdlib.h>
+
+#if defined(TVRN_CUSTOM_RESOLVER)
+uint32_t custom_inet_addr(const char *cp);
+char *custom_inet_ntoa(struct in_addr in);
+#define inet_addr custom_inet_addr
+#define inet_ntoa custom_inet_ntoa
+#endif
+
 
 using namespace RakNet;
 
@@ -685,7 +693,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 			return false;
 	}
 	RakAssert(servinfo);
-	
+
 	unsigned short oldPort = address.addr4.sin_port;
 #if RAKNET_SUPPORT_IPV6==1
 	if (servinfo->ai_family == AF_INET)
