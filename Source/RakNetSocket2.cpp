@@ -46,13 +46,13 @@ void CustomGetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 void CustomDomainNameToIP( const char *domainName, char ip[65] );
 #else
 #include "RakNetSocket2_Windows_Linux.cpp"
-#include "RakNetSocket2_Windows_Linux_360.cpp"
 #include "RakNetSocket2_Vita.cpp"
 #include "RakNetSocket2_NativeClient.cpp"
-#include "RakNetSocket2_Berkley.cpp"
 #include "RakNetSocket2_Berkley_NativeClient.cpp"
 #include "RakNetSocket2_WindowsStore8.cpp"
 #endif
+#include "RakNetSocket2_Windows_Linux_360.cpp"
+#include "RakNetSocket2_Berkley.cpp"
 #undef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #endif
