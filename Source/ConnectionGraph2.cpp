@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -43,7 +43,11 @@ ConnectionGraph2::ConnectionGraph2()
 }
 ConnectionGraph2::~ConnectionGraph2()
 {
-
+	for (unsigned int i=0, n=remoteSystems.Size(); i<n; ++i)
+	{
+		RakNet::OP_DELETE(remoteSystems[i],_FILE_AND_LINE_);
+	}
+	remoteSystems.Clear(false, _FILE_AND_LINE_);
 }
 bool ConnectionGraph2::GetConnectionListForRemoteSystem(RakNetGUID remoteSystemGuid, SystemAddress *saOut, RakNetGUID *guidOut, unsigned int *outLength)
 {
@@ -302,7 +306,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 			}
 		}
 	}
-	
+
 	return RR_CONTINUE_PROCESSING;
 }
 
