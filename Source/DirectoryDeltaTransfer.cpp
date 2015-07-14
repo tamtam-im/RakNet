@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -37,12 +37,12 @@ public:
 
 	DDTCallback() {}
 	virtual ~DDTCallback() {}
-	
+
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
 		char fullPathToDir[1024];
 
-		if (onFileStruct->fileName && onFileStruct->fileData && subdirLen < strlen(onFileStruct->fileName))
+		if (onFileStruct->fileData && subdirLen < strlen(onFileStruct->fileName))
 		{
 			strcpy(fullPathToDir, outputSubdir);
 			strcat(fullPathToDir, onFileStruct->fileName+subdirLen);
@@ -58,7 +58,7 @@ public:
 	{
 		char fullPathToDir[1024];
 
-		if (fps->onFileStruct->fileName && subdirLen < strlen(fps->onFileStruct->fileName))
+		if (subdirLen < strlen(fps->onFileStruct->fileName))
 		{
 			strcpy(fullPathToDir, outputSubdir);
 			strcat(fullPathToDir, fps->onFileStruct->fileName+subdirLen);
@@ -224,7 +224,7 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet *packet)
 }
 PluginReceiveResult DirectoryDeltaTransfer::OnReceive(Packet *packet)
 {
-	switch (packet->data[0]) 
+	switch (packet->data[0])
 	{
 	case ID_DDT_DOWNLOAD_REQUEST:
 		OnDownloadRequest(packet);

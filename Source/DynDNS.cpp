@@ -3,7 +3,7 @@
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  LICENSE file in the root directory of this source tree. An additional grant
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
@@ -219,7 +219,7 @@ void DynDNS::Update(void)
 				existingHost[0]=0;
 				// Resolve DNS we are setting. If equal to current then abort
 				RakNetSocket2::DomainNameToIP(host.C_String(), existingHost);
-				if (existingHost && strcmp(existingHost, myIPStr)==0)
+				if (strcmp(existingHost, myIPStr)==0)
 				{
 					// DynDNS considers setting the IP to what it is already set abuse
 					tcp->DeallocatePacket(packet);
